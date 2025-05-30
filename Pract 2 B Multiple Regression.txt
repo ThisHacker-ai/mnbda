@@ -1,0 +1,36 @@
+#fetch the data
+StudentData <- read.csv("c:\\bda\\studentmarks.csv")
+head(StudentData)
+nrow(StudentData)
+
+install.packages("caTools")    # For Logistic regression
+library(caTools)
+
+split <- sample.split(StudentData, SplitRatio = 0.75)
+split
+
+training_reg <- subset(StudentData, split == "TRUE")
+test_reg <- subset(StudentData, split == "FALSE")
+
+# Training model
+fit_MRegressor_model <- lm(formula = admit ~ gre+gpa+rank, 
+                      data = training_reg)
+
+# Predict test data based on model
+predict_reg <- predict(fit_MRegressor_model, 
+                       newdata = test_reg)
+predict_reg  
+
+cdplot(as.factor(admit)~ gpa, data=StudentData)
+cdplot(as.factor(admit)~ gre, data=StudentData)
+cdplot(as.factor(admit)~ rank, data=StudentData)
+
+
+
+
+
+
+
+
+
+
