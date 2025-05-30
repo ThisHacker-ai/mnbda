@@ -1,0 +1,142 @@
+Practical 1 Implement Decision tree classification technique 
+
+library(party)
+print(head(readingSkills))
+input.dat <- readingSkills[c(1:105),]
+png(file = "C:\Users\Dell\Downloads\decision_tree.png")
+output.tree <- ctree(
+nativeSpeaker ~ age + shoeSize + score,
+data = input.dat)
+plot(output.tree)
+
+
+Practical 2(Implement SVM classification technique)
+
+# Support Vector Machine (SVM)
+
+# Importing the dataset
+dataset = read.csv('C:\\Users\\hp\\Downloads\\socialnetworking.csv')
+dataset = dataset[3:5]
+print(dataset)
+print(dataset$Purchased)
+# Splitting the dataset into the Training set and Test set
+install.packages('caTools')
+library(caTools)
+set.seed(123)
+split = sample.split(dataset$Purchased, SplitRatio = 0.75)
+training_set = subset(dataset, split == TRUE)
+print(training_set)
+test_set = subset(dataset, split == FALSE)
+print(test_set)
+# Feature Scaling
+training_set[-3] = scale(training_set[-3]) # [-3] means 3rd index will be dropped
+test_set[-3] = scale(test_set[-3])
+print(training_set[-3])
+print (test_set[-3])
+# Fitting SVM to the Training set
+install.packages('e1071')
+library(e1071)
+classifier = svm(formula = Purchased ~ .,
+                 data = training_set,
+                 type = 'C-classification',
+                 kernel = 'linear')
+print (classifier)
+
+# Predicting the Test set results
+y_pred = predict(classifier, newdata = test_set[-3])
+print(y_pred)
+
+# Making the Confusion Matrix
+cm = table(test_set[, 3], y_pred)
+print (cm)
+
+
+Practical 3(Implement Regression Model to import a data from web storage)
+
+years_of_exp=c(7,5,1,3)
+salary_in_lakhs=c(21,13,6,8)
+employee.data=data.frame(years_of_exp, salary_in_lakhs)
+employee.data
+model<-lm(salary_in_lakhs~years_of_exp,data=employee.data)
+summary(model)
+plot(salary_in_lakhs~years_of_exp,data=employee.data)
+abline(model)
+
+Practical 4 (
+mydata<-read.csv('C:\\Users\\hp\\Downloads\\studentmarks.csv')
+head(mydata)
+summary(mydata)
+sapply(mydata,sd)
+mydata$rank<factor(mydata$rank)
+mylogit<-glm(admit~gre+gpa+rank,data=mydata,family="binomial")
+summary(mylogit)
+
+Practical 5a(Build a Classification Model)
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+fruits=pd.read_table('C:\\Users\\hp\\Downloads\\fruit_data.txt')
+fruits.head()
+print(fruits)
+print(fruits['fruit_name'].unique())
+print(fruits.shape)
+
+
+Practical 5b(Fruit Type Distribution)
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Read the data
+fruits = pd.read_table('C:\\Users\\hp\\Downloads\\fruit_data.txt')
+
+# Group by Fruit_Name
+a = fruits.groupby("Fruit_Name").size()
+print(a)
+
+# Define specific colors for each fruit
+colors = {
+    'apple': '#1f77b4',      # blue
+    'mandarin': '#ff7f0e',   # orange
+    'orange': '#2ca02c',     # green
+    'lemon': '#d62728'       # red
+}
+
+# Create the plot
+plt.figure(figsize=(8,5))
+sns.barplot(
+    x=a.index,
+    y=a.values,
+    palette=[colors[x] for x in a.index]
+)
+
+plt.xlabel('Fruit Name')
+plt.ylabel('Count')
+plt.title('Fruit Name Count')
+plt.xticks(rotation=45)
+plt.show()
+
+
+
+Practical 6(Build a Clustering Model)
+
+from numpy import unique
+from numpy import where
+from sklearn.datasets import make_classification
+from sklearn.cluster import KMeans
+from numpy import where
+from sklearn.datasets import make_classification
+from matplotlib import pyplot
+X, y = make_classification(n_samples=1000, n_features=2, n_informative=2,
+n_redundant=0, n_clusters_per_class=1, random_state=4)
+for class_value in range(2):
+    row_ix = where(y == class_value)
+    pyplot.scatter(X[row_ix, 0], X[row_ix, 1])
+pyplot.show()
+
+
+
+

@@ -1,0 +1,41 @@
+Step 1: Download and Install VirtualBox
+	- Go to www.virtualbox.org and download the latest stable version of Oracle VirtualBox.
+	- Once the .exe setup file has been downloaded, double click and run it.
+	- Keep all the default values and follow the installation process by clicking Next and finally Finish.
+	
+Step 2: Download Ubuntu
+	- Go to www.ubuntu.com and download the Ubuntu 20.04 LTS .iso file.
+	- Once the .iso file is downloaded, open VirtualBox and Create a New Virtual Machine.
+	- While Setting up this VM, Select the 'ubuntu-20.04.iso' file as the boot image file, set the CPU to 4 cores, set the memory size to 4gb, set the storage size to 100gb and keep the rest of the default values before clicking Create.
+	- Now start the VM and go through the setup process.
+	- Once the setup is done restart the VM.
+	
+Step 3: Install Hadoop
+	- Login to Ubuntu.
+	- Open the terminal and type the following commands:
+	  $ sudo apt update
+	  $ sudo apt install default-jdk
+	  $ ava -version'
+	  $ wget https://hadoop.apache.org/release/3.2.2.html/hadoop-3.2.2.tar.gz
+	  $ tar xzvf hadoop-3.2.2.tar.gz
+	  $ sudo mv hadoop-3.2.2 /usr/local/hadoop
+	  $ readlink -f /usr/bin/java | sed "s:bin/java::"
+	- Configuring Hadoop’s Java Home:
+	  To begin, open hadoop-env.sh
+	  $ sudo nano /usr/local/hadoop/etc/hadoop/hadoop-env.sh
+	  File will be opened. Add the following line at the end of .sh file:
+	  export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
+	  to save the changes in the file, press ctrl and x together.
+	  then press Y
+	  then press Enter key
+	- Then apply following commands:
+	  $ /usr/lib/jvm/java-11-openjdk-amd64/
+	  
+Step 4: Running Hadoop
+	- Open the terminal and type the following commands:
+	  $ /usr/local/hadoop/bin/hadoop
+	  $ mkdir ~/input
+	  $ cp /usr/local/hadoop/etc/hadoop/*.xml ~/input
+	- To run the MapReduce Function type the following command:
+	  $ /usr/local/hadoop/bin/hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.2.jar grep ~/input ~/grep_example 'allowed[.]*'
+	  $ cat ~/grep_example/*
