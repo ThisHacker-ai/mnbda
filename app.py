@@ -17,7 +17,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 's3k3y0912982387347645'
+
 
 database.init_db()
 
