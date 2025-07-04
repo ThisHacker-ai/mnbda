@@ -1,0 +1,699 @@
+﻿DOMAIN CONTROLLER VM #1
+🖥️ Installing and Configuring Windows Server with Hyper-V, AD, SQL Server, and Related Tools
+________________
+
+
+### 🔹 Step 1: Open Server Manager
+1. Boot up your Windows Server.
+
+2. Open Server Manager from the Start menu.
+
+________________
+
+
+### 🔹 Step 2: Install Hyper-V
+   1. In Server Manager, click Add roles and features.
+
+   2. Click Next.
+
+   3. Choose Role-based or feature-based installation, then click Next.
+
+   4. Keep default settings and click Next.
+
+   5. Select Hyper-V, click Add Features, then Next.
+
+   6. Select Failover Clustering, click Add Features, and ensure Group Policy Management is also selected. Click Next.
+
+   7. In Network adapters, check Ethernet0, and click Next.
+
+   8. Select Allow this server to send and receive live migrations of virtual machines, click Next.
+
+   9. Keep default settings, click Next.
+
+   10. Click Install. Restart the server once installation completes.
+
+________________
+
+
+### 🔹 Step 3: Install Active Directory Domain Services
+      1. Open Server Manager, click Add roles and features.
+
+      2. Click Next, select Role-based or feature-based installation, and click Next.
+
+      3. Keep defaults and click Next.
+
+      4. In Server Roles, select Active Directory Domain Services, click Add Features, and click Next.
+
+      5. In Features, select .NET Framework 3.5 Features, click Next.
+
+      6. Click Install. Restart after installation.
+
+________________
+
+
+### 🔹 Step 4: Change Server Name
+         1. In Server Manager, click Local Server.
+
+         2. Under System Properties, click Computer Name → Change.
+
+         3. Enter new computer name (e.g., StudentServer) and click OK → Apply.
+
+         4. Restart the server.
+
+________________
+
+
+### 🔹 Step 5: Disable Windows Firewall
+            1. In Server Manager, click Local Server → Firewall.
+
+            2. Click Turn Windows Firewall On or Off.
+
+            3. Select Turn off Windows Firewall for both Public and Private profiles. Click OK.
+
+________________
+
+
+### 🔹 Step 6: Create Domain
+               1. Restart the server and open Server Manager.
+
+               2. Click the Notification Flag → Promote this server to a domain controller.
+
+               3. In Active Directory Domain Services Configuration Wizard:
+
+                  * Select Add a forest, enter domain name (e.g., STUDENT.COM), and click Next.
+
+                  * Enter a password (same as admin recommended), click Next.
+
+                  * Click Next at DNS Options, Additional Options, and Paths.
+
+                  * Click Next at Pre-requisites, ensure checks pass, and click Install.
+
+                     4. Restart after installation and log in as Administrator.
+
+________________
+
+
+### 🔹 Step 7: Install SQL Server
+                        1. Mount the SQL Server ISO in the VM.
+
+                        2. Run setup.exe, then:
+
+                           * Click Installation → New SQL Server stand-alone installation.
+
+                           * Leave defaults and click Next.
+
+                           * Accept license terms, click Next.
+
+                           * Pass Install Rules, click Next.
+
+                           * In Feature Selection, select:
+
+                              * Database Engine Services
+
+                              * Reporting Services – Native
+
+                              * Reporting Services SharePoint
+
+                              * Reporting Services Add-in for SharePoint products
+
+                              * Client Tools Connectivity
+
+                                 * Click Next.
+
+                                 * Select Default instance, click Next.
+
+                                 * In Database Engine Configuration, select Mixed Mode, enter same admin password, click Add Current User, then Next.
+
+                                 * Click Install and wait for completion.
+
+________________
+
+
+### 🔹 Step 8: Install Windows ADK (Windows Assessment and Deployment Kit)
+                                    1. Run ADK setup.
+
+                                    2. Keep default settings, click Next.
+
+                                    3. Select No, click Next.
+
+                                    4. Accept license terms.
+
+                                    5. Select features:
+
+                                       * Deployment Tools
+
+                                       * Windows PE
+
+                                       * Windows Performance Toolkit
+
+                                          6. Click Install.
+
+________________
+
+
+### 🔹 Step 9: Install SQL Server Management Studio (SSMS)
+                                             1. Run the SSMS setup.
+
+                                             2. Click Install and wait for completion.
+
+                                             3. Restart the server.
+
+________________
+
+
+### 🔹 Step 10: Create User in Active Directory
+                                                1. In Server Manager, go to Tools → Active Directory Users and Computers.
+
+                                                2. Right-click Managed Service Accounts → New → User.
+
+                                                3. Enter VMMService as First Name and User logon name, click Next.
+
+                                                4. Enter a password (same as admin), select Password never expires, click Next, then Finish.
+
+                                                5. Right-click VMMService, select Add to Group.
+
+                                                6. Enter Administrators, click Check Names, then OK.
+
+________________
+
+
+### 🔹 Step 11: Connect SQL Server to Windows Server
+                                                   1. Open SSMS, click Connect.
+
+                                                   2. In Object Explorer, right-click Security → Logins → New Login.
+
+                                                   3. Enter VMMService, click Search → Check Names → OK.
+
+                                                   4. Under Server Roles, select:
+
+                                                      * dbcreator
+
+                                                      * processadmin
+
+                                                      * securityadmin
+
+                                                         5. Click OK.
+
+________________
+
+
+### 🔹 Step 12: Create Object in ADSI Edit
+                                                            1. In Server Manager, go to Tools → ADSI Edit.
+
+                                                            2. In ADSI Edit, go to Action → Connect to..., keep defaults, click OK.
+
+                                                            3. Expand Default naming context.
+
+                                                            4. Right-click DC=STUDENT,DC=COM, select New → Object.
+
+                                                            5. Choose Container class, enter name (e.g., VMMObjectContainer), click Next → Finish.
+
+                                                            6. Right-click CN=VMMObjectContainer, select Properties.
+🌟 Requirements to Install SCVMM in a VM
+Before installing System Center Virtual Machine Manager (SCVMM) in a virtual machine, you need to prepare both the VM and the environment. Here’s a simple list you can copy into your journal.
+________________
+
+
+🔹 1️⃣ Prepare the VM
+✅ A VM running Windows Server 2016, 2019, or 2022 (Standard or Datacenter Edition).
+✅ At least 8 GB of RAM (16 GB recommended for good performance).
+✅ At least 80 GB of disk space (more if you plan to manage many hosts).
+✅ At least 2-4 CPU cores.
+✅ Connect the VM to a network with access to the domain and SQL Server.
+________________
+
+
+🔹 2️⃣ Install Prerequisites Inside the VM
+✅ .NET Framework 4.6 or higher.
+✅ Windows Assessment and Deployment Kit (ADK).
+✅ SQL Server instance (you can install it on the same VM or a separate server).
+✅ Windows Server Update Services (WSUS) – optional, but good for patching.
+✅ Join the VM to the Active Directory domain (needed for ADSI Edit and SCVMM configuration).
+________________
+
+
+🔹 3️⃣ Prepare Active Directory for SCVMM
+✅ Use ADSI Edit to create a special container for SCVMM:
+                                                               * Open Server Manager > Tools > ADSI Edit.
+
+                                                               * Connect to the Default Naming Context.
+
+                                                               * Navigate to your domain (e.g., DC=STUDENT,DC=COM).
+
+                                                               * Right-click the domain container and select New > Object.
+
+                                                               * Create a container object named VMMObjectContainer.
+
+                                                               * Copy the distinguishedName (e.g., CN=VMMObjectContainer,DC=STUDENT,DC=COM).
+
+This container helps SCVMM store and manage objects inside Active Directory.
+________________
+
+
+🔹 4️⃣ Service Account for SCVMM
+✅ Create a domain user account with permissions to install SCVMM and access the SQL Server.
+✅ Use this account to run the SCVMM setup.
+________________
+
+
+🔹 5️⃣ SQL Server
+✅ You need a SQL Server instance (2016 or newer) for the SCVMM database.
+✅ It can be on the same VM (for testing) or a separate server (for production).
+________________
+
+
+🔹 6️⃣ Network and Firewall
+✅ Ensure the VM has network connectivity to the domain, hosts, and SQL Server.
+✅ Open firewall ports needed for SCVMM and SQL Server.
+
+
+
+SQL SERVER VM #2
+🌐 Steps to Create SQL Server VM and Link with Domain Controller
+________________
+
+
+🔹 Step 1: Create a New Virtual Machine for SQL Server
+ 1️⃣ Open your virtualization software (e.g., VMware Workstation, Oracle VirtualBox).
+2️⃣ Click on "Create New Virtual Machine".
+3️⃣ Select Custom (Advanced) installation.
+4️⃣ Click Next through default settings (e.g., hardware compatibility).
+5️⃣ Select Installer Disc Image (ISO):
+                                                                  * Browse and select the Windows Server 2016 ISO file.
+6️⃣ Name your virtual machine, e.g., Ramanuj – SQL Server.
+7️⃣ Select BIOS, click Next.
+8️⃣ Allocate 4GB RAM (4096 MB) for the VM.
+9️⃣ Keep default hardware settings and storage (use SCSI), click Next.
+🔟 Finalize and click Finish.
+
+________________
+
+
+🔹 Step 2: Pre-Start Settings
+ 1️⃣ Before powering on, click Edit Virtual Machine Settings.
+2️⃣ Select Floppy, uncheck Connect at Power On.
+3️⃣ Click OK.
+________________
+
+
+🔹 Step 3: Install Windows Server 2016
+1️⃣ Power on the VM.
+2️⃣ Proceed with installation:
+                                                                     * Click Install Now.
+
+                                                                     * Choose Windows Server 2016 Datacenter Evaluation (Desktop Experience).
+
+                                                                     * Accept license terms.
+
+                                                                     * Choose Custom installation, default settings, and install.
+3️⃣ Once installed, set the admin password and log in.
+
+________________
+
+
+🔹 Step 4: Add Required Windows Features
+1️⃣ Open Server Manager → Add Roles and Features.
+2️⃣ Go through defaults (click Next).
+3️⃣ Under Features, select:
+                                                                        * .NET Framework 3.5 Features
+
+                                                                        * .NET Framework 4.6 Features (with ASP.NET 4.6).
+4️⃣ Click Install.
+
+________________
+
+
+🔹 Step 5: Link SQL Server VM to Domain Controller
+1️⃣ In SQL Server VM, go to Network Adapter settings:
+                                                                           * Right-click Ethernet0 → Properties → IPv4 → Advanced → DNS.
+2️⃣ Start your Domain Controller VM, copy its IP Address.
+3️⃣ Back in SQL Server VM, add this IP under DNS as the Preferred DNS.
+4️⃣ In Server Manager, click Local Server → Workgroup → Change.
+5️⃣ Under Member of Domain, enter the Domain Name (e.g., EDTECH.COM).
+6️⃣ Enter Domain Admin credentials.
+7️⃣ Restart the VM.
+
+________________
+
+
+🔹 Step 6: Install SQL Server 2016
+1️⃣ Mount or insert SQL Server 2016 ISO into VM.
+2️⃣ Run Setup → Installation → New SQL Server standalone installation.
+3️⃣ Accept license terms and defaults.
+4️⃣ Select features:
+                                                                              * SQL Server Replication
+
+                                                                              * Full-Text and Semantic Extractions for Search
+
+                                                                              * Analysis Services
+
+                                                                              * Reporting Services (Native and SharePoint)
+
+                                                                              * Reporting Services Add-in for SharePoint
+5️⃣ Use Named Instance: MSSQLSERVER.
+6️⃣ Set authentication to Mixed Mode, set a password (e.g., ADMIN@123), add current user.
+7️⃣ Click Install.
+
+________________
+
+
+🔹 Step 7: Install SQL Server Management Studio (SSMS)
+1️⃣ Run SSMS setup from the installer.
+2️⃣ Click Install and let the process complete.
+3️⃣ Restart the VM.
+________________
+
+
+🔹 Step 8: Connect to SQL Server via SSMS
+1️⃣ Open SSMS.
+2️⃣ Click Connect to your SQL Server instance.
+3️⃣ Verify functionality by creating test databases or running queries.
+
+
+
+
+
+
+TO DO INSIDE SCVMM 
+✅ Step-by-Step: Creating a Logical Network and IP Pool in SCVMM
+________________
+
+
+Step 1: Create a Logical Network
+                                                                                 1. Open SCVMM and go to the Fabric tab on the left side.
+
+                                                                                 2. Right-click on Logical Networks and select "Create Logical Network".
+
+                                                                                 3. In the name field, type: SLB_SUBNET and click Next.
+
+                                                                                 4. On the next screen:
+
+                                                                                    * Select "One Connected Network".
+
+                                                                                    * Tick both boxes:
+
+                                                                                       * "Allow network virtualization"
+
+                                                                                       * "Create a VM network with the same name"
+
+                                                                                          * Click Next.
+
+                                                                                             5. Under Network Sites:
+
+                                                                                                * Select your current Host Group.
+
+                                                                                                * Enter the IP subnet: 192.168.70.0/24
+
+                                                                                                * Click Next.
+
+                                                                                                   6. Review the summary and then click Finish to create the logical network.
+
+________________
+
+
+Step 2: Create an IP Pool for the Logical Network
+                                                                                                      1. Still in the Fabric tab, click on "Create" in the top menu.
+
+                                                                                                      2. Select "Create IP Pool".
+
+                                                                                                      3. In the name field, type: SLB_POOL.
+
+                                                                                                         * Make sure it’s linked to the logical network SLB_SUBNET.
+
+                                                                                                         * Click Next.
+
+                                                                                                            4. Leave the default values on the next screen. Click Next.
+
+                                                                                                            5. Set the IP range for this pool:
+
+                                                                                                               * Starting IP: 192.168.70.100
+
+                                                                                                               * Ending IP: 192.168.70.110
+
+                                                                                                               * Click Next.
+
+                                                                                                                  6. Enter the Default Gateway as 192.168.70.1.
+
+                                                                                                                     * Keep the metric set to Automatic.
+
+                                                                                                                     * Click Next.
+
+                                                                                                                        7. Now enter the DNS settings:
+
+                                                                                                                           * DNS IP address: 192.168.70.9
+
+                                                                                                                           * DNS suffix: EDTECH.ONLINE
+
+                                                                                                                           * Click Next.
+
+                                                                                                                              8. Keep all remaining values as default and continue clicking Next.
+
+                                                                                                                              9. On the final page, review the summary of your IP pool and click Finish.
+
+Step 1: Installing System Center Orchestrator 2019
+1️⃣ In your Cloud Management File, click on System Center Tools.
+2️⃣ Click on SCO_2019.
+3️⃣ Click Run.
+4️⃣ Click Next.
+5️⃣ Select I accept the agreement and click Next.
+6️⃣ Keep default values and click Next.
+7️⃣ Click Extract to extract files.
+8️⃣ Wait for the extraction to finish and click Finish.
+9️⃣ Go to C:\System Orchestrator 2019 folder and double-click on SetupOrchestrator.
+🔟 Click Install.
+1️⃣1️⃣ Type your Organization Name (e.g., EDTECH) and click Next.
+1️⃣2️⃣ Select I accept the license terms and click Next.
+1️⃣3️⃣ Click Next.
+1️⃣4️⃣ Keep default values and click Next.
+1️⃣5️⃣ If prompted for missing software, select Activate IIS/.NET features/roles and click Next.
+1️⃣6️⃣ Wait for the installation of prerequisites and click Next.
+1️⃣7️⃣ In Configure Service Account, enter the domain credentials and click Test. If successful, click Next.
+1️⃣8️⃣ Enter your SQL Database server name and click Test. If successful, click Next.
+1️⃣9️⃣ Select New Database, name it Orchestrator, and click Next.
+2️⃣0️⃣ Keep default values and click Next.
+2️⃣1️⃣ Keep default values and click Next.
+2️⃣2️⃣ Click Next.
+2️⃣3️⃣ Select Off and click Next.
+2️⃣4️⃣ Select No, I am not willing to participate and click Next.
+2️⃣5️⃣ Review the summary and click Install.
+2️⃣6️⃣ Wait for the installation to finish; the Runbook Designer will start.
+________________
+
+
+Step 2: Installing Silverlight x64
+1️⃣ In your Cloud Folder, click on Silverlight_x64 application.
+2️⃣ Click Install now.
+3️⃣ Uncheck Enable Microsoft Update and click Next.
+4️⃣ Click Close to complete the installation.
+________________
+
+
+Step 3: Creating & Testing a Monitor Runbook
+🎯 Goal: Create and test a monitor Runbook.
+1️⃣ In the Runbook Designer, right-click on Runbooks and select New Folder.
+2️⃣ Name the folder as desired.
+3️⃣ Right-click on the new folder and select New Runbook.
+4️⃣ Inside the Runbook, drag and drop the following activities from the Activities Pane on the left:
+                                                                                                                                 * System > Restart System
+
+                                                                                                                                 * Monitoring > Get Service Status
+
+                                                                                                                                 * Notifications > Send Event Log Message
+ 5️⃣ Arrange the activities to create a logical workflow (e.g., monitor a service, send a log, and restart the system if needed).
+6️⃣ Save and test the Runbook using the Runbook Tester.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Full Master Setup Guide for Cloud Computing Practicals
+DOMAIN CONTROLLER VM #1 – Windows Server + Domain + SQL + SCVMM Prep
+1.      Boot up the VM and open Server Manager.
+2.      Install Hyper-V via Add Roles and Features → Role-based → Hyper-V → Failover Clustering → Ethernet0 → Enable live migration.
+3.      Install Active Directory Domain Services (AD DS) and .NET 3.5.
+4.      Change computer name to something like StudentServer. Restart after applying.
+5.      Disable Firewall for Public and Private profiles via Control Panel or Server Manager.
+6.      Promote the server to a domain controller. Add a new forest (e.g., STUDENT.COM). Use same password as Admin.
+7.      Mount SQL Server ISO → Install SQL with features: Database Engine, Reporting Services, Client Tools. Use Mixed Mode auth.
+8.      Install Windows ADK with Deployment Tools, Windows PE, Windows Performance Toolkit.
+9.      Install SQL Server Management Studio (SSMS). Restart after install.
+10.  In Active Directory Users and Computers, create user VMMService with admin rights.
+11.  Open SSMS → Connect → Create new login VMMService → Assign roles: dbcreator, processadmin, securityadmin.
+12.  Use ADSI Edit to create a container named VMMObjectContainer. Copy its distinguishedName.
+SCVMM Installation Requirements
+·        VM running Windows Server 2016/2019/2022 with 8+ GB RAM, 80+ GB storage, 2–4 cores.
+·        Install prerequisites: .NET 4.6+, ADK, SQL Server instance, optional WSUS.
+·        VM must be joined to the domain (created earlier).
+·        Create VMMObjectContainer in ADSI Edit beforehand.
+·        Create a domain user (e.g., VMMService) to run the SCVMM installer.
+·        Ensure VM can reach domain and SQL Server. Firewall ports should be open.
+SQL SERVER VM #2 – Setup and Domain Join
+13.  Create new VM with Windows Server 2016 ISO. Use Custom, BIOS, 4GB RAM.
+14.  Disable floppy drive before starting. Uncheck 'Connect at Power On'.
+15.  Install Windows Server with default settings. Set Admin password.
+16.  Add Windows Features: .NET 3.5, .NET 4.6 with ASP.NET 4.6.
+17.  Change DNS in IPv4 settings to Domain Controller's IP.
+18.  Join VM to domain (e.g., EDTECH.COM). Restart.
+19.  Install SQL Server 2016 with Reporting Services and Mixed Mode authentication.
+20.  Install SSMS → Restart → Test SQL login and basic DB creation.
+SCVMM – Create Logical Network and IP Pool
+21.  Open SCVMM → Fabric → Right-click Logical Network → Create Logical Network.
+22.  Name: SLB_SUBNET → Select One Connected Network → Enable Network Virtualization → Create matching VM network.
+23.  Under Network Sites: select Host Group → Add subnet 192.168.70.0/24 → Finish.
+24.  Click 'Create' → Select Create IP Pool → Name it SLB_POOL.
+25.  Assign IP range: 192.168.70.100 to 192.168.70.110.
+26.  Set Gateway: 192.168.70.1. DNS: 192.168.70.9. DNS suffix: EDTECH.ONLINE → Click Finish.
+ORCHESTRATOR – Install and Runbook Setup
+27.  Mount SCO_2019 → Run setup → Accept terms → Extract files → Run SetupOrchestrator.
+28.  Install → Enter organization name → Accept license → Activate IIS/.NET if needed.
+29.  Configure Service Account with domain credentials → Test connection.
+30.  Enter SQL Server name → Test connection → Create DB 'Orchestrator'.
+31.  Accept defaults → Disable customer experience → Click Install.
+32.  Install Silverlight_x64 (if required) → Uncheck updates → Close after install.
+ORCHESTRATOR – Creating and Testing Monitor Runbook
+33.  Open Runbook Designer → Right-click 'Runbooks' → New Folder.
+34.  Create a new Runbook → Drag: Get Service Status, Send Event Log Message, Restart System.
+35.  Arrange the flow: Monitor → Log → Restart → Save.
+36.  Open Runbook Tester → Run the flow and confirm functionality.
+
+
+ 
+Prac 4 – Orchestrator (Install & Runbook)
+🛠️ What you need before starting:
+·        • A VM with Windows Server 2016 installed (via VMware).
+·        • VM must be joined to a domain (e.g., STUDENT.COM).
+·        • SQL Server must be installed (same or another VM).
+·        • You need a domain user account (e.g., STUDENT\Administrator) with admin rights.
+📌 Simulation Steps:
+·        • Mount ISO → Run setup → Install → Accept terms
+·        • Default settings → Configure DB and domain user
+·        • Open Runbook Designer → Drag 'Monitor' activity
+·        • Set trigger (e.g., if string is empty) → Save
+·        • Open Runbook Tester → Run it → Done
+
+
+ 
+Prac 3 – Service Manager + SSRS
+🛠️ What you need before starting:
+·        • 2 VMs are needed (one with Service Manager, one with SQL Server).
+·        • Both VMs must be in the same domain.
+·        • SQL Server must be installed before starting.
+·        • Install Microsoft Report Viewer and .NET Framework 3.5 in advance.
+·        • Make sure domain user credentials are available for config.
+📌 Simulation Steps:
+·        • Install Service Manager from ISO
+·        • Install prerequisites (.NET 3.5, Report Viewer)
+·        • Configure domain and SQL settings
+·        • Install and configure SSRS
+·        • Backup encryption key → Done
+
+
+ 
+Prac 6 – Install & Deploy DPM
+🛠️ What you need before starting:
+·        • 2 VMs: one for DPM and one acting as Domain Controller (with iSCSI).
+·        • SQL Server should already be installed.
+·        • Set up iSCSI on Domain Controller.
+·        • DPM VM must be joined to domain.
+·        • You need admin-level domain user account.
+📌 Simulation Steps:
+·        • Install SQL Server on a VM
+·        • Setup iSCSI disk (on Domain Controller)
+·        • Connect using iSCSI Initiator (from DPM VM)
+·        • Initialize disk in Disk Management → Create volume
+·        • Open DPM → Add disk → Create Protection Group
+
+
+ 
+Prac 5 – Orchestrator Server Management
+🛠️ What you need before starting:
+·        • Prac 4 (Orchestrator) must already be completed and working.
+·        • Runbook Designer must be installed and working.
+·        • Domain must exist and you should have admin user access.
+·        • Optional: A file (e.g., SCO-TEXT.txt) for testing automation activities.
+📌 Simulation Steps:
+·        • Open Runbook Designer → Right-click runbook → Permissions
+·        • Create benchmark runbook (Compare Values, Looping)
+·        • Use CMD: PermissionsConfig.exe → Change groups
+·        • Right-click → Add Computer Group → Enter machine name
+
+
+ 
+Prac 2 – SDN Infra with SCVMM
+🛠️ What you need before starting:
+·        • A VM with Windows Server 2016 + SCVMM 2019 installed.
+·        • VM should be part of a domain.
+·        • Basic SCVMM setup must be completed (from Prac 1).
+·        • IP ranges planned (e.g., 192.168.29.100–110).
+·        • You may need to export a certificate using certlm.msc.
+📌 Simulation Steps:
+·        • Open SCVMM → Fabric → Create Logical Network
+·        • Create IP Pool (192.168.29.100-110)
+·        • Create Logical Switch → Add uplink + port profile
+·        • Open certlm.msc → Export cert → Apply in SCVMM
+·        • Confirm SDN controller is recognized
